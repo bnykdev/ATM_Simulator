@@ -1,0 +1,445 @@
+#include <stdio.h>
+#include <conio.h>
+#include <string.h>
+#include <stdbool.h>
+#include <time.h>
+#include <unistd.h>
+#include <stdlib.h>
+
+#define MAX_ACCOUNTS 100
+
+struct Account {
+    int accountNumber;
+    char name[50];
+    char password[4];
+    float savings,checkings;
+};
+
+void waiting(unsigned int mseconds)
+{
+	clock_t limit = mseconds + clock();
+	while (limit > clock());
+}
+
+int accountCount = 0;
+struct Account accounts[MAX_ACCOUNTS];
+
+//presenting a welcome screen for the user
+void welcome()
+{
+	printf("\n\t\t\t\xC9\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xBB\n");
+	printf("\t\t\t\xBA          \xFE\xFE\xFE     \xFE\xFE\xFE\xFE\xFE\xFE\xFE\xFE\xFE\xFE\xFE\xFE\xFE  \xFE         \xFE  \xBA\n");
+	printf("\t\t\t\xBA         \xFE\xFE\xFE\xFE\xFE         \xFE\xFE\xFE       \xFE\xFE       \xFE\xFE  \xBA\n");
+	printf("\t\t\t\xBA        \xFE\xFE\xFE \xFE\xFE\xFE        \xFE\xFE\xFE       \xFE\xFE\xFE     \xFE\xFE\xFE  \xBA\n");
+	printf("\t\t\t\xBA       \xFE\xFE\xFE   \xFE\xFE\xFE       \xFE\xFE\xFE       \xFE\xFE\xFE\xFE   \xFE\xFE\xFE\xFE  \xBA\n");
+	printf("\t\t\t\xBA      \xFE\xFE\xFE     \xFE\xFE\xFE      \xFE\xFE\xFE       \xFE\xFE \xFE\xFE \xFE\xFE \xFE\xFE  \xBA\n");
+	printf("\t\t\t\xBA     \xFE\xFE\xFE\xFE\xFE\xFE\xFE\xFE\xFE\xFE\xFE\xFE\xFE     \xFE\xFE\xFE       \xFE\xFE  \xFE\xFE\xFE  \xFE\xFE  \xBA\n");
+	printf("\t\t\t\xBA    \xFE\xFE\xFE         \xFE\xFE\xFE    \xFE\xFE\xFE       \xFE\xFE   \xFE   \xFE\xFE  \xBA\n");
+	printf("\t\t\t\xBA   \xFE\xFE\xFE           \xFE\xFE\xFE   \xFE\xFE\xFE       \xFE\xFE       \xFE\xFE  \xBA\n");
+	printf("\t\t\t\xBA  \xFE\xFE\xFE             \xFE\xFE\xFE  \xFE\xFE\xFE       \xFE\xFE       \xFE\xFE  \xBA\n");
+	printf("\t\t\t\xBA                                              \xBA\n");
+	printf("\t\t\t\xC8\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCDSIMULATION\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xBC\n");
+	printf("\n");
+}
+
+void reciept()
+{
+	printf("\n\t\t\t\xC9\xC8\xC8\xC8\xC8\xC8\xC8\xC8\xC8\xC8\xC8\xC8\xC8\xC8\xC8\xC8\xC8\xC8\xC8\xC8\xC8\xC8\xC8\xC8\xC8\xC8\xC8\xC8\xC8\xC8\xC8\xC8\xC8\xC8\xC8\xC8\xC8\xC8\xC8\xC8\xC8\xC8\xC8\xC8\xC8\xC8\xC8\xBB\n");
+}
+
+// Function to create a new account
+void createAccount() {
+    if (accountCount < MAX_ACCOUNTS) {
+        struct Account newAccount;
+
+        printf("\t\t\tEnter name: ");
+        scanf("%s", newAccount.name);
+		
+        printf("\t\t\tEnter account number: ");
+        scanf("%d", &newAccount.accountNumber);
+		
+        printf("\t\t\tEnter your 4-digit password: ");
+        scanf("%s",&newAccount.password);
+
+        accounts[accountCount] = newAccount;
+        accountCount++;
+        printf("\t\t\t_______________________________________________\n\n");
+        printf("\t\t\tAccount created successfully.\n");
+    } else {
+        printf("\t\t\t_______________________________________________\n\n");
+        printf("\t\t\tMaximum account limit reached.\n");
+    }
+}
+
+/* Function to find account index by account number,
+searches the account in the database and returns the account number,
+return the account number if found or returns -1 if account not found*/
+int findAccountIndex(int accountNumber) {
+    for (int i = 0; i < accountCount; i++) {
+        if (accounts[i].accountNumber == accountNumber) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+/*Function to authenticate user this function takes input the account number
+and the password given and runs the findaccountindex function within the function
+compares the account number with the password given and returns true in the form of strcmp or false*/
+bool authenticate(int accountNumber, const char *password) {
+    int index = findAccountIndex(accountNumber);
+    if (index != -1) {
+        return strcmp(accounts[index].password, password) == 0;
+    }
+    return false;
+}
+
+/*Function to display account balance
+this function is pretty self explanatory, it takes input the account number and printsthe balance
+or prits account not found*/
+void checkBalanceSavings(int accountNumber) {
+    int index = findAccountIndex(accountNumber);
+    if (index != -1) {
+    	printf("\t\t\t_______________________________________________\n\n");
+        printf("\t\t\tYour balance: %.2f\n", accounts[index].savings);
+    } else {
+        printf("\t\t\tAccount not found.\n");
+        printf("\t\t\t_______________________________________________\n\n");
+    }
+}
+
+void checkBalanceCheckings(int accountNumber) {
+    int index = findAccountIndex(accountNumber);
+    if (index != -1) {
+    	printf("\t\t\t_______________________________________________\n\n");
+        printf("\t\t\tYour balance: %.2f\n", accounts[index].checkings);
+    } else {
+        printf("\t\t\tAccount not found.\n");
+        printf("\t\t\t_______________________________________________\n\n");
+    }
+}
+
+/*This Function simulates the action of depositing money into the account
+it takes account number and the amount to be deposited as input
+and deposits the money into the bank account*/
+void depositSavings(int accountNumber, float amount) {
+    int index = findAccountIndex(accountNumber);
+    if (index != -1) {
+        accounts[index].savings += amount;
+        printf("\n\t\t\tDeposit successful.\n");
+        printf("\t\t\t_______________________________________________\n\n");
+		printf("\t\t\tYour New Balance : %.2f\n\n", accounts[index].savings);
+    } else {
+        printf("\t\t\tAccount not found.\n");
+    }
+}
+
+void depositCheckings(int accountNumber, float amount) {
+    int index = findAccountIndex(accountNumber);
+    if (index != -1) {
+        accounts[index].checkings += amount;
+        printf("\n\t\t\tDeposit successful.\n");
+        printf("\t\t\t_______________________________________________\n\n");
+		printf("\t\t\tYour New Balance : %.2f\n\n", accounts[index].checkings);
+    } else {
+        printf("\t\t\tAccount not found.\n");
+    }
+}
+
+/*this Function simulates the action of withdrawing money from the bank account
+this function takes the account number and amount to be withdrawn as input
+this function checks and returns appropriate output if
+the amount to be withdrawn exceeds the account balance*/
+void withdrawSavings(int accountNumber, float amount) {
+    int index = findAccountIndex(accountNumber);
+    if (index != -1) {
+        if (accounts[index].savings >= amount)
+		{	
+			if((accounts[index].savings)*0.9 <= amount)
+			{
+				printf("\n\t\t\tYour Withdrawal Amount limit reached.");
+				printf("\n\t\t\t________________________________________________\n\n");
+			}
+			else{
+            	accounts[index].savings -= amount;
+            	printf("\n\t\t\tWithdrawal successful");
+				printf("\n\t\t\t________________________________________________\n\n");
+				printf("\t\t\tYour New balance: %.2f\n", accounts[index].savings);
+			}
+        } else {
+			printf("\n\t\t\t________________________________________________\n\n");
+            printf("\t\t\tInsufficient balance.\n");
+        }
+    } else {printf("\n\t\t\t________________________________________________\n\n");
+        printf("\t\t\tAccount not found.\n");
+    }
+}
+
+void withdrawCheckings(int accountNumber, float amount) {
+    int index = findAccountIndex(accountNumber);
+    if (index != -1) {
+        if (accounts[index].checkings >= amount) {
+            accounts[index].checkings -= amount;
+            printf("\n\t\t\tWithdrawal successful");
+			printf("\n\t\t\t________________________________________________\n\n");
+			printf("\t\t\tYour New balance: %.2f\n", accounts[index].checkings);
+        } else {
+			printf("\n\t\t\t________________________________________________\n\n");
+            printf("\t\t\tInsufficient balance.\n");
+        }
+    } else {printf("\n\t\t\t________________________________________________\n\n");
+        printf("\t\t\tAccount not found.\n");
+    }
+}
+
+
+//giving a menu for user-interaction
+void menu()
+{
+    printf("\t\t\t[ 1 ] Create Account\n");
+    printf("\t\t\t[ 2 ] Check Balance\n");
+    printf("\t\t\t[ 3 ] Deposit\n");
+    printf("\t\t\t[ 4 ] Withdraw\n");
+	printf("\t\t\t[ 5 ] Exit ATM");
+	printf("\n\t\t\t________________________________________________\n\n");
+    printf("\t\t\tEnter your choice: ");
+}
+
+void internalmenu()
+{
+	printf("\t\t\t[ 1 ] Savings Account\n");
+	printf("\t\t\t[ 2 ] Checkings Account\n");
+	printf("\t\t\t[ 3 ] Back to Main Menu\n");
+	printf("\n\t\t\t________________________________________________\n\n");
+    printf("\t\t\tEnter your choice: ");
+}
+
+/*the program starts here and the main function is the backbone of the program*/
+int main() {
+    int choice, accountNumber;
+    float amount;
+    char password[20];
+    while (1) {
+    	l0:
+    	welcome();
+    	menu();
+        scanf("%d", &choice);
+        
+        int internalChoice;
+
+        switch (choice)
+		{
+            case 1:
+                system("cls");
+                welcome();
+                createAccount();
+                printf("\n\t\t\tWait Loading . . .");
+                waiting(1500);
+                system("cls");
+                break;
+            case 2:
+            	l1:
+            	system("cls");
+            	welcome();
+            	internalmenu();
+            	scanf("%d",&internalChoice);
+            	system("cls");
+            	welcome();
+                if (internalChoice==1)
+            	{
+            		printf("\t\t\tEnter your account number: ");
+                	scanf("%d", &accountNumber);
+                	printf("\t\t\tEnter your password: ");
+                	scanf("%s", password);
+        			if (authenticate(accountNumber, password))
+					{
+        				checkBalanceSavings(accountNumber);
+        				printf("\n\t\t\tWait Loading . . .");
+        				waiting(1500);
+        				system("cls");
+    				}
+					else
+					{
+        				printf("\t\t\t");
+        				printf("\t\t\t_______________________________________________\n\n");
+    					printf("Authentication failed.\n");
+	    				printf("\n\t\t\tWait Loading . . .");
+						waiting(1500);
+						system("cls");
+    				}
+          				break;
+    			}
+    			else if (internalChoice==2)
+    			{
+    				printf("\t\t\tEnter your account number: ");
+                	scanf("%d", &accountNumber);
+                	printf("\t\t\tEnter your password: ");
+                	scanf("%s", password);
+            		if (authenticate(accountNumber, password))
+					{
+        				checkBalanceCheckings(accountNumber);
+        				printf("\n\t\t\tWait Loading . . .");
+        				waiting(1500);
+        				system("cls");
+    				}
+					else
+					{
+        				printf("\t\t\t");
+        				printf("\t\t\t_______________________________________________\n\n");
+    					printf("Authentication failed.\n");
+	    				printf("\n\t\t\tWait Loading . . .");
+						waiting(1500);
+						system("cls");
+    				}
+            		break;
+    			}
+    			else if(internalChoice==3)
+    			{
+    				printf("\t\t\t_______________________________________________\n\n");
+            		printf("\t\t\tWait Loading . . .");
+					waiting(1500);
+					system("cls");
+					goto l0;
+            	}
+            	else{
+            		printf("\t\t\t_______________________________________________\n\n");
+					printf("\n\t\t\tInvalid Choice");
+					printf("\n\n\t\t\tWait Loading . . .");
+					system("cls");
+            		goto l1;
+				}
+				internalChoice == 0;
+				break;
+            case 3:
+            	l2:
+            	system("cls");
+            	welcome();
+            	internalmenu();
+            	scanf("%d",&internalChoice);
+            	system("cls");
+            	welcome();
+                switch(internalChoice)
+                {
+                	case 1:
+                		printf("\t\t\tEnter your account number: ");
+        				scanf("%d", &accountNumber);
+	                	printf("\t\t\tEnter the amount to deposit: ");
+    	            	scanf("%f", &amount);
+						depositSavings(accountNumber, amount);
+                		waiting(1500);
+                		system("cls");
+                		break;
+                	case 2:
+						printf("\t\t\tEnter your account number: ");
+        				scanf("%d", &accountNumber);
+	                	printf("\t\t\tEnter the amount to deposit: ");
+    	            	scanf("%f", &amount);
+						depositCheckings(accountNumber, amount);
+                		waiting(1500);
+                		system("cls");
+                		break;
+        			case 3:
+        				printf("\t\t\t_______________________________________________\n\n");
+        				printf("\t\t\tWait Loading . . .");
+						waiting(1500);
+						system("cls");
+						goto l0;
+        			default:
+						printf("\t\t\tInvalid Choice\n");
+						printf("\t\t\t_______________________________________________\n\n");
+						printf("\t\t\tWait Loading . . .");
+						waiting(1500);
+						system("cls");
+						goto l2;
+				}
+				internalChoice == 0;
+                break;
+            case 4:
+            	l3:
+            	system("cls");
+            	welcome();
+            	internalmenu();
+            	scanf("%d",&internalChoice);
+            	system("cls");
+            	welcome();
+                switch(internalChoice)
+                {
+                	case 1:
+                		printf("\t\t\tEnter your account number: ");
+                		scanf("%d", &accountNumber);
+	                	printf("\t\t\tEnter your password: ");
+		                scanf("%s", password);
+						if (authenticate(accountNumber, password))
+						{
+                    		printf("\t\t\tEnter the amount to withdraw: ");
+                    		scanf("%f", &amount);
+                    		withdrawSavings(accountNumber, amount);
+                    		printf("\n\t\t\tWait Loading . . .");
+                   			waiting(1500);
+                   			system("cls");
+               			}
+						else
+						{
+               				printf("\t\t\t_______________________________________________\n\n");
+                   			printf("\t\t\tAuthentication failed.\n\n");
+                   			printf("\t\t\tWait Loading . . .");
+                   			waiting(1500);
+	                    	system("cls");
+                		}
+                		break;
+                	case 2:
+                		printf("\t\t\tEnter your account number: ");
+                		scanf("%d", &accountNumber);
+	                	printf("\t\t\tEnter your password: ");
+		                scanf("%s", password);
+						if (authenticate(accountNumber, password))
+						{
+                    		printf("\t\t\tEnter the amount to withdraw: ");
+                   			scanf("%f", &amount);
+                   			withdrawCheckings(accountNumber, amount);
+                   			printf("\n\t\t\tWait Loading . . .");
+                   			waiting(1500);
+                   			system("cls");
+               			}
+						else
+						{
+                			printf("\t\t\t_______________________________________________\n\n");
+                   			printf("\t\t\tAuthentication failed.\n\n");
+                   			printf("\t\t\tWait Loading . . .");
+                   			waiting(1500);
+                   			system("cls");
+               			}
+               			break;
+                	case 3:
+						printf("\n\n\t\t\tWait Loading . . .");
+						waiting(1500);
+						system("cls");
+						goto l0;
+							
+                	default:printf("\t\t\tInvalid Choice");
+                			printf("\t\t\t_______________________________________________\n\n");
+							printf("\n\n\t\t\tWait Loading . . .");
+							waiting(1500);
+							system("cls");
+							goto l3;
+				}
+                internalChoice == 0;
+                break;
+            case 5:
+            	system("cls");
+            	welcome();
+                printf("\t\t\tExiting ATM. Have a nice day!\n\n");
+                printf("\t\t\tWait Loading . . .\n\n\n\t\t\t");
+                waiting(1500);
+                return 0;
+            default:
+            	printf("\t\t\t_______________________________________________\n\n");
+                printf("\t\t\tInvalid choice.");
+            	printf("\n\n\t\t\tWait Loading . . .");
+            	waiting(1500);
+                system("cls");
+                break;
+        }
+    }
+    return 0;
+}
